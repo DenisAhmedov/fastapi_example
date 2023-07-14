@@ -12,6 +12,10 @@ class PostCreate(PostBase):
     pass
 
 
+class PostUpdate(PostBase):
+    pass
+
+
 class Post(PostBase):
     id: int
     author_id: int

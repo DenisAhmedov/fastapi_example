@@ -29,4 +29,4 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def get_users_posts(db: Session, author_id: int, skip: int = 0, limit: int = 100):
-    return db.query(Post).filter(author_id == author_id).offset(skip).limit(limit).all()
+    return db.query(Post).filter(Post.author_id == author_id).offset(skip).limit(limit).all()
