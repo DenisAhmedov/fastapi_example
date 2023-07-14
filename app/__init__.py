@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 
-from .routers import posts, users
+from .routers import posts_router, users_router, token_router
 
 app = FastAPI(title='example app on FastAPI')
 
-app.include_router(users.router)
-app.include_router(posts.router)
-
+app.include_router(posts_router)
+app.include_router(users_router)
+app.include_router(token_router)
 
 @app.get("/")
 async def root():
