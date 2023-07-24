@@ -19,6 +19,8 @@ class PostUpdate(PostBase):
 class Post(PostBase):
     id: int
     author_id: int
+    likes: int = 0
+    dislikes: int = 0
 
     class Config:
         orm_mode = True

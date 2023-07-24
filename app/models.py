@@ -1,7 +1,23 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, Table
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+
+
+posts_likes = Table(
+    "posts_likes",
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('post_id', Integer, ForeignKey('posts.id'), primary_key=True)
+)
+
+
+posts_dislikes = Table(
+    "posts_dislikes",
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('post_id', Integer, ForeignKey('posts.id'), primary_key=True)
+)
 
 
 class User(Base):
@@ -13,6 +29,8 @@ class User(Base):
     is_active = Column(Boolean, default=True)
 
     posts = relationship('Post', back_populates='author')
+    likes_posts = relationship('Post', secondary="posts_likes", back_populates='whom_likes')
+    dislikes_posts = relationship('Post', secondary="posts_dislikes", back_populates='whom_dislikes')
 
     def __str__(self):
         return f'<User {self.username}>'
@@ -27,15 +45,17 @@ class Post(Base):
     author_id = Column(Integer, ForeignKey('users.id'))
 
     author = relationship('User', back_populates='posts')
+    whom_likes = relationship('User', secondary="posts_likes", back_populates='likes_posts')
+    whom_dislikes = relationship('User', secondary="posts_dislikes", back_populates='dislikes_posts')
 
     def __str__(self):
         return f'<Post {self.title}>'
 
+    @property
+    def likes(self):
+        return len(self.whom_likes)
 
-class Like(Base):
-    __tablename__ = 'likes'
+    @property
+    def dislikes(self):
+        return len(self.whom_dislikes)
 
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    post_id = Column(Integer, ForeignKey('posts.id'), primary_key=True)
-    like = Column(Integer, default=None)
-    dislike = Column(Integer, default=None)

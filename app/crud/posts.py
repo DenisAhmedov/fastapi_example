@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models import Post
+from app.models import Post, User
 import app.schemas as schemas
 
 
@@ -32,4 +32,32 @@ def update_post(db: Session, post: Post, data: schemas.PostUpdate):
 def delete_post(db: Session, post: Post):
     db.delete(post)
     db.commit()
+
+
+def give_like(db: Session, post: Post, user: User):
+    post.whom_likes.append(user)
+    db.add(post)
+    db.commit()
+
+
+def give_dislike(db: Session, post: Post, user: User):
+    post.whom_dislikes.append(user)
+    db.add(post)
+    db.commit()
+
+
+def remove_like(db: Session, post: Post, user: User):
+    post.whom_likes.remove(user)
+    db.add(post)
+    db.commit()
+
+
+def remove_dislike(db: Session, post: Post, user: User):
+    post.whom_dislikes.remove(user)
+    db.add(post)
+    db.commit()
+
+
+
+
 
