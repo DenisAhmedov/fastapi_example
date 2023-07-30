@@ -27,6 +27,10 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    email = Column(String, unique=True, index=True)
+    first_name = Column(String)
+    last_name = Column(String)
+    location = Column(String)
 
     posts = relationship('Post', back_populates='author')
     likes_posts = relationship('Post', secondary="posts_likes", back_populates='whom_likes')

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.depends import get_db
 from app.schemas import Token
-from app.utils.auth import authenticate_user, create_access_token
+from app.utils import authenticate_user, create_access_token
 
 router = APIRouter(
     prefix='/token',

@@ -28,6 +28,10 @@ class Post(PostBase):
 
 class UserBase(BaseModel):
     username: str
+    email: str
+    first_name: str | None
+    last_name: str | None
+    location: str | None
 
 
 class UserCreate(UserBase):

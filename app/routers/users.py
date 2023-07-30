@@ -8,6 +8,8 @@ from app.schemas import Post, User, UserCreate
 from fastapi import Depends, HTTPException
 from fastapi.routing import APIRouter
 
+from app.utils import email_verify, get_data_from_clearbit
+
 router = APIRouter(
     prefix='/users',
     tags=['users'],
@@ -21,10 +23,19 @@ def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 
 
 @router.post('/', response_model=User, status_code=201)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username(db, username=user.username)
     if db_user:
         raise HTTPException(status_code=400, detail='username already registered')
+    if not await email_verify(user.email):
+        raise HTTPException(status_code=400, detail='email is not valid')
+    if cl_data := await get_data_from_clearbit(user.email):
+        if not user.first_name:
+            user.first_name = cl_data['first_name']
+        if not user.last_name:
+            user.last_name = cl_data['last_name']
+        if not user.location:
+            user.location = cl_data['location']
     return crud.create_user(db=db, user=user)
 
 
